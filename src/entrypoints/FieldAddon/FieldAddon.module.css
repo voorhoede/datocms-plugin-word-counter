@@ -1,0 +1,19 @@
+.switchField {
+  margin-bottom: var(--spacing-m);
+}
+
+.button {
+  font-family: var(--base-font-family);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--base-body-color);
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.buttonIcon {
+  margin-right: var(--spacing-s);
+}

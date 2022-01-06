@@ -1,0 +1,45 @@
+.horizontalList {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-s);
+}
+
+.verticalList {
+  width: 30ch;
+  margin-bottom: var(--spacing-m);
+}
+
+.item {
+  margin-right: var(--spacing-xl);
+}
+
+.verticalList .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-s) var(--spacing-m);
+  margin: 0;
+}
+
+.verticalList .item:nth-child(odd) {
+  background-color: var(--lighter-bg-color);
+}
+
+.term {
+  justify-content: center;
+  margin: 0;
+  margin-right: var(--spacing-s);
+}
+
+.verticalList .term {
+  width: 20ch;
+  overflow-wrap: break-word;
+}
+
+.horizontalList .definition {
+  margin: 0;
+}
+
+.verticalList .definition {
+  text-align: right;
+}

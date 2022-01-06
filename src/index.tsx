@@ -1,0 +1,67 @@
+import {
+  connect,
+  Field,
+  RenderFieldExtensionCtx,
+  RenderManualFieldExtensionConfigScreenCtx,
+  FieldIntentCtx,
+} from 'datocms-plugin-sdk'
+
+import ConfigScreen from './entrypoints/ConfigScreen/ConfigScreen'
+import FieldAddon from './entrypoints/FieldAddon/FieldAddon'
+import FieldAddonConfigScreen from './entrypoints/FieldAddonConfigScreen/FieldAddonConfigScreen'
+
+import { fieldsOptions, SettingOption } from './lib/constants'
+import { render } from './utils/render'
+
+import 'datocms-react-ui/styles.css'
+import './styles/index.css'
+
+const extensionId = 'wordCounter'
+
+connect({
+  renderConfigScreen(ctx) {
+    return render(<ConfigScreen ctx={ctx} />)
+  },
+  manualFieldExtensions() {
+    return [
+      {
+        id: extensionId,
+        name: 'Word counter',
+        type: 'addon',
+        fieldTypes: ['text', 'string', 'rich_text'],
+        configurable: true,
+      },
+    ]
+  },
+  renderManualFieldExtensionConfigScreen(
+    _,
+    ctx: RenderManualFieldExtensionConfigScreenCtx
+  ) {
+    return render(<FieldAddonConfigScreen ctx={ctx} />)
+  },
+  overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
+    const pluginGlobalParameters: any = ctx.plugin.attributes.parameters
+    const fieldsSettings: SettingOption[] =
+      pluginGlobalParameters?.fieldsToEnable || fieldsOptions
+
+    const hasPlugin: boolean = field.attributes.appearance.addons.some(
+      (addon) => addon.field_extension === extensionId
+    )
+    const showOnThisFieldType: boolean = fieldsSettings.some(
+      (setting: SettingOption) => setting.value === field.attributes.field_type
+    )
+
+    if (
+      pluginGlobalParameters?.autoApply &&
+      !hasPlugin &&
+      showOnThisFieldType
+    ) {
+      return {
+        addons: [{ id: extensionId }],
+      }
+    }
+  },
+  renderFieldExtension(_, ctx: RenderFieldExtensionCtx) {
+    render(<FieldAddon ctx={ctx} />)
+  },
+})
