@@ -23,8 +23,12 @@ export default function StatsList({ children, title, list }: Props) {
       <dl className={list ? styles.verticalList : styles.horizontalList}>
         {terms.map((term, index) => (
           <div className={styles.item} key={index}>
-            <dt className={`${styles.term} ${list ? 'h4' : ''}`.trim()}>{term.props.children}</dt>
-            <dd className={`${styles.definition} ${list ? '' : 'h1'}`.trim()}>{definitions[index].props.children}</dd>
+            <dt className={`${styles.term} ${list ? 'h4' : ''}`.trim()}>
+              {term.props.children}
+            </dt>
+            <dd className={`${styles.definition} ${list ? '' : 'h1'}`.trim()}>
+              {definitions[index].props.children}
+            </dd>
           </div>
         ))}
       </dl>
@@ -32,7 +36,10 @@ export default function StatsList({ children, title, list }: Props) {
   )
 }
 
-function getDefinitions(acc: ReactElement[], child: ReactElement): ReactElement[] {
+function getDefinitions(
+  acc: ReactElement[],
+  child: ReactElement
+): ReactElement[] {
   if (
     child.type !== 'dd' &&
     child.type !== 'dt' &&

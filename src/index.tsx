@@ -10,7 +10,8 @@ import ConfigScreen from './entrypoints/ConfigScreen/ConfigScreen'
 import FieldAddon from './entrypoints/FieldAddon/FieldAddon'
 import FieldAddonConfigScreen from './entrypoints/FieldAddonConfigScreen/FieldAddonConfigScreen'
 
-import { fieldsOptions, SettingOption } from './lib/constants'
+import { fieldsOptions } from './lib/constants'
+import { GlobalParameters, SettingOption } from './lib/types'
 import { render } from './utils/render'
 
 import 'datocms-react-ui/styles.css'
@@ -40,7 +41,9 @@ connect({
     return render(<FieldAddonConfigScreen ctx={ctx} />)
   },
   overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
-    const pluginGlobalParameters: any = ctx.plugin.attributes.parameters
+    const pluginGlobalParameters: GlobalParameters =
+      ctx.plugin.attributes.parameters
+
     const fieldsSettings: SettingOption[] =
       pluginGlobalParameters?.fieldsToEnable || fieldsOptions
 

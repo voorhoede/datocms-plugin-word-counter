@@ -7,14 +7,19 @@ import {
   FieldGroup,
 } from 'datocms-react-ui'
 
-import { spaceOptions, calculationsOptions, fieldsOptions } from '../../lib/constants'
+import {
+  spaceOptions,
+  calculationsOptions,
+  fieldsOptions,
+} from '../../lib/constants'
+import { GlobalParameters } from '../../lib/types'
 
 type Props = {
   ctx: RenderConfigScreenCtx
 }
 
 export default function ConfigScreen({ ctx }: Props) {
-  const pluginParameters = ctx.plugin.attributes.parameters
+  const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
   return (
     <Canvas ctx={ctx}>
@@ -48,9 +53,7 @@ export default function ConfigScreen({ ctx }: Props) {
               id="fieldsToEnable"
               label="Fields where this plugin is enabled"
               hint="These are all fields where the word count plugin will automatically apply."
-              value={
-                pluginParameters?.fieldsToEnable || fieldsOptions
-              }
+              value={pluginParameters?.fieldsToEnable || fieldsOptions}
               selectInputProps={{
                 isMulti: true,
                 options: fieldsOptions,

@@ -2,14 +2,15 @@ import { RenderManualFieldExtensionConfigScreenCtx } from 'datocms-plugin-sdk'
 import { Canvas, Form, SelectField, FieldGroup } from 'datocms-react-ui'
 
 import { spaceOptions, calculationsOptions } from '../../lib/constants'
+import { Parameters, GlobalParameters } from '../../lib/types'
 
 type Props = {
   ctx: RenderManualFieldExtensionConfigScreenCtx
 }
 
 export default function FieldExtensionConfigScreen({ ctx }: Props) {
-  const pluginParameters = ctx.parameters
-  const pluginGlobalParameters: any = ctx.plugin.attributes.parameters
+  const pluginParameters: Parameters = ctx.parameters
+  const pluginGlobalParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
   return (
     <Canvas ctx={ctx}>

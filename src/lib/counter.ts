@@ -1,4 +1,4 @@
-import { CountObject, CommonWords } from './constants'
+import { CountObject, CommonWordsObject } from './types'
 
 export default function counter(string: string): CountObject {
   const stringExcludingSpaces = string.replace(/\s/g, '')
@@ -16,7 +16,7 @@ export default function counter(string: string): CountObject {
 }
 
 function wordCounter(string: string): number {
-  const wordRegex = /[ \n]/
+  const wordRegex = /[ \n|/]/
   const words = string.split(wordRegex).filter(hasNoSpace)
   return words.length
 }
@@ -48,19 +48,19 @@ function paragraphsCounter(string: string): number {
   return paragraphs.length
 }
 
-function commonWords(string: string): CommonWords {
+function commonWords(string: string): CommonWordsObject {
   const wordRegex = /[ \n]/
   const words = string.split(wordRegex)
   const normalizedWords = words
     .map(word => word
-      .replace(/["'-(){}[\]]/g, '')
+      .replace(/["|'-(){}[\]]/g, '')
       .replace(/[.,!?;:]\s*$/, '')
       .toLowerCase()
     )
     .sort()
     .filter(hasNoSpace)
 
-  const wordCount = normalizedWords.reduce((acc: any, word: any) => {
+  const wordCount = normalizedWords.reduce((acc: CommonWordsObject, word: string) => {
     acc[word] = (acc[word] || 0) + 1
     return acc
   }, {})

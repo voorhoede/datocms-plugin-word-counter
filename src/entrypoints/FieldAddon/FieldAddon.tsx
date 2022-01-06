@@ -11,13 +11,17 @@ import {
 import StatsList from '../../components/StatsList'
 
 import {
-  CountObject,
   spaceConstants,
   calculationsConstants,
   calculationsOptions,
   spaceOptions,
-  SettingOption,
 } from '../../lib/constants'
+import {
+  CountObject,
+  SettingOption,
+  Parameters,
+  GlobalParameters,
+} from '../../lib/types'
 import counter from '../../lib/counter'
 import styles from './FieldAddon.module.css'
 
@@ -26,8 +30,9 @@ type Props = {
 }
 
 export default function FieldAddon({ ctx }: Props) {
-  const pluginGlobalParameters: any = ctx.plugin.attributes.parameters
-  const pluginParameters: any = ctx.parameters
+  const pluginGlobalParameters: GlobalParameters =
+    ctx.plugin.attributes.parameters
+  const pluginParameters: Parameters = ctx.parameters
 
   const calculationsSettings: SettingOption[] =
     pluginParameters?.calculationsToShow ||

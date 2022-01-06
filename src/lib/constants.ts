@@ -1,23 +1,3 @@
-export type CountObject = {
-  words: number
-  characters: number
-  charactersExcludingSpaces: number
-  specialCharacters: number
-  specialCharactersExcludingSpaces: number
-  sentences: number
-  paragraphs: number
-  commonWords: CommonWords
-}
-
-export type CommonWords = {
-  [key: string]: number
-}
-
-export type SettingOption = {
-  value: string
-  label: string
-}
-
 export const fieldsConstants = {
   richText: 'rich_text',
   text: 'text',
