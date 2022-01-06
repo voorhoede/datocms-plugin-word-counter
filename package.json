@@ -1,6 +1,6 @@
 {
   "name": "datocms-plugin-word-counter",
-  "homepage": "https://github.com/voorhoede/",
+  "homepage": "https://github.com/voorhoede/datocms-plugin-word-counter",
   "version": "1.0.0",
   "description": "A plugin for DatoCMS that gives info for text and string fields about word counts",
   "scripts": {
@@ -24,6 +24,7 @@
     "character-counter",
     "sentences-counter",
     "paragraphs-counter",
+    "common-words",
     "word-stats",
     "stats"
   ],
@@ -36,7 +37,7 @@
   "datoCmsPlugin": {
     "title": "Word counter",
     "previewImage": "docs/preview.gif",
-    "coverImage": "docs/cover.jpg",
+    "coverImage": "docs/cover.png",
     "entryPoint": "build/index.html"
   },
   "eslintConfig": {
