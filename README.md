@@ -1,6 +1,6 @@
 # DatoCMS plugin: Word counter
 
-**This DatoCMS plugin gives you info for text and string fields about word counts.**
+**This DatoCMS plugin gives you info for text and string fields about word counts, character counts, sentences, paragraphs and common words.**
 
 
 ## Features
