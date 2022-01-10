@@ -35,7 +35,9 @@ export function structuredTextToString(value: any): string {
       return
     }
 
-    result += `\n${node.text} `
+    if (node.text) {
+      result += `\n${node.text} `
+    }
   })
 
   return result
