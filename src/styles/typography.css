@@ -34,6 +34,14 @@ p {
   font-family: var(--base-font-family);
 }
 
+.body--small {
+  font-size: var(--font-size-xxs);
+}
+
+.text-thin {
+  font-weight: normal;
+}
+
 strong,
 .text-bold {
   font-weight: bold;
