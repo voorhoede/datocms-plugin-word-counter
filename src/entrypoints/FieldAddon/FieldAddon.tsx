@@ -11,6 +11,7 @@ import {
 import StatsList from '../../components/StatsList'
 
 import {
+  wordsPerMinute,
   spaceConstants,
   calculationsConstants,
   calculationsOptions,
@@ -152,6 +153,22 @@ export default function FieldAddon({ ctx }: Props) {
               <>
                 <dt>Paragraphs</dt>
                 <dd>{fieldStats.paragraphs}</dd>
+              </>
+            ) : (
+              <></>
+            )}
+
+            {calculationsSettings.some(
+              (setting) => setting.value === calculationsConstants.readingTime
+            ) ? (
+              <>
+                <dt>Reading time</dt>
+                <dd>
+                  <span className={styles.statsListItem}>{fieldStats.readingTime}</span>
+                  <span className={`${styles.statsListItem} body--small text-thin`}>
+                    Based on {wordsPerMinute} words per minute
+                  </span>
+                </dd>
               </>
             ) : (
               <></>

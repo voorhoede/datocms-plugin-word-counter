@@ -11,7 +11,7 @@ import FieldAddon from './entrypoints/FieldAddon/FieldAddon'
 import FieldAddonConfigScreen from './entrypoints/FieldAddonConfigScreen/FieldAddonConfigScreen'
 
 import { fieldsOptions } from './lib/constants'
-import { GlobalParameters, SettingOption } from './lib/types'
+import { GlobalParameters, SettingOption, Fields } from './lib/types'
 import { render } from './utils/render'
 
 import 'datocms-react-ui/styles.css'
@@ -29,7 +29,11 @@ connect({
         id: extensionId,
         name: 'Word counter',
         type: 'addon',
-        fieldTypes: ['text', 'string', 'rich_text'],
+        fieldTypes: [
+          Fields.textField,
+          Fields.stringField,
+          Fields.richTextField,
+        ],
         configurable: true,
       },
     ]

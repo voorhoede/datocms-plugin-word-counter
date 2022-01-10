@@ -25,7 +25,7 @@ export default function ConfigScreen({ ctx }: Props) {
     <Canvas ctx={ctx}>
       <p>
         This DatoCMS plugin gives you info for text and string fields about word
-        counts.
+        count.
       </p>
 
       <Form>

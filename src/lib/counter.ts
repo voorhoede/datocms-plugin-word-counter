@@ -1,4 +1,5 @@
 import { CountObject, CommonWordsObject } from './types'
+import { wordsPerMinute } from './constants'
 
 export default function counter(string: string): CountObject {
   const stringExcludingSpaces = string.replace(/\s/g, '')
@@ -12,6 +13,7 @@ export default function counter(string: string): CountObject {
     sentences: sentencesCounter(string),
     paragraphs: paragraphsCounter(string),
     commonWords: commonWords(string),
+    readingTime: readingTimeCounter(string),
   }
 }
 
@@ -67,7 +69,32 @@ function commonWords(string: string): CommonWordsObject {
 
   return Object.entries(wordCount)
     .sort(([, a]: any, [, b]: any) => b - a)
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+}
+
+function readingTimeCounter(string: string): string {
+  const numberOfWords = wordCounter(string)
+  const readingTimePerMinute = numberOfWords / wordsPerMinute
+
+  if (readingTimePerMinute === 0) {
+    return '0 seconds'
+  }
+
+  if (readingTimePerMinute < 0.95) {
+    const readingTimePerSecond = (readingTimePerMinute * 60) % 60
+
+    if (readingTimePerSecond >= 1 && readingTimePerSecond < 2) {
+      return '~ 1 second'
+    } else if (readingTimePerSecond >= 2) {
+      return `~ ${Math.floor(readingTimePerSecond)} seconds`
+    }
+
+    return '< 1 second'
+  } else if (readingTimePerMinute >= 0.95 && readingTimePerMinute <= 1.5) {
+    return '~ 1 minute'
+  }
+
+  return `~ ${Math.ceil(readingTimePerMinute)} minutes`
 }
 
 function hasNoSpace(word: string): boolean {
