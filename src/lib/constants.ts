@@ -1,22 +1,20 @@
-export const fieldsConstants = {
-  richText: 'rich_text',
-  text: 'text',
-  string: 'string'
-}
+import { Fields } from './types'
+
+export const wordsPerMinute = 225
 
 export const fieldsOptions = [
-  { label: 'String fields', value: fieldsConstants.string },
-  { label: 'Text fields', value: fieldsConstants.text },
-  { label: 'Rich-text fields', value: fieldsConstants.richText },
+  { label: 'String fields', value: Fields.stringField },
+  { label: 'Text fields', value: Fields.textField },
+  { label: 'Rich-text fields', value: Fields.richTextField },
 ]
-
 
 export const calculationsConstants = {
   numberOfCharacters: '1',
   numberOfSpecialCharacters: '2',
   numberOfSentences: '3',
   numberOfParagraphs: '4',
-  showCommonWords: '5'
+  showCommonWords: '5',
+  readingTime: '6'
 }
 
 export const calculationsOptions = [
@@ -24,6 +22,7 @@ export const calculationsOptions = [
   { label: 'Number of special characters', value: calculationsConstants.numberOfSpecialCharacters },
   { label: 'Number of sentences', value: calculationsConstants.numberOfSentences },
   { label: 'Number of paragraphs', value: calculationsConstants.numberOfParagraphs },
+  { label: 'Reading time', value: calculationsConstants.readingTime },
   { label: 'Show common words', value: calculationsConstants.showCommonWords },
 ]
 

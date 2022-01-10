@@ -7,6 +7,7 @@ export type CountObject = {
   sentences: number
   paragraphs: number
   commonWords: CommonWordsObject
+  readingTime: string
 }
 
 export type CommonWordsObject = {
@@ -26,4 +27,10 @@ export type Parameters = {
 export interface GlobalParameters extends Parameters {
   autoApply?: boolean
   fieldsToEnable?: SettingOption[]
+}
+
+export enum Fields {
+  stringField = 'string',
+  textField = 'text',
+  richTextField = 'rich_text'
 }
