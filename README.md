@@ -1,6 +1,6 @@
 # DatoCMS plugin: Word counter
 
-**This DatoCMS plugin gives you information for text and string fields about word count, character count, sentences, paragraphs and common words.**
+**This DatoCMS plugin gives you information for text and string fields about word count, character count, sentences, paragraphs, reading time and common words.**
 
 ![](https://github.com/voorhoede/datocms-plugin-word-counter/raw/main/docs/word-counter.png)
 
@@ -8,9 +8,10 @@
 
 * Add to `rich-text`, `string` and `text` fields or your own selection of these fields.
 * See count of words, characters, sentences, paragraphs
+* See an estimate of the reading time
 * See common words
-* Full control over the visible counts
-* Be able to choose to add spaces and enters in the counts
+* Full control over the visible calculations
+* Be able to choose to add spaces and enters in the calculations
 
 ## Configuration
 
@@ -45,6 +46,7 @@ By changing the following setting you can choose on which fields this plugin wil
 > * Number of special characters
 > * Number of sentences
 > * Number of paragraphs
+> * Reading time
 > * Show common words
 
 - **Include space (select)**: You can choose if spaces and enters are taken into account in the calculations shown in the plugin. The default `Show switch to toggle spaces` will show a switch to let the user choose themselves.
