@@ -5,7 +5,6 @@ import {
   RenderManualFieldExtensionConfigScreenCtx,
   FieldIntentCtx,
 } from 'datocms-plugin-sdk'
-import { PluginAttributes } from 'datocms-plugin-sdk/dist/types/SiteApiSchema'
 
 import ConfigScreen from './entrypoints/ConfigScreen/ConfigScreen'
 import FieldAddon from './entrypoints/FieldAddon/FieldAddon'
@@ -35,7 +34,7 @@ connect({
           Fields.stringField,
           Fields.richTextField,
           Fields.structuredTextField,
-        ] as NonNullable<PluginAttributes['field_types']>,
+        ],
         configurable: true,
       },
     ]
