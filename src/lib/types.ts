@@ -32,5 +32,6 @@ export interface GlobalParameters extends Parameters {
 export enum Fields {
   stringField = 'string',
   textField = 'text',
-  richTextField = 'rich_text'
+  richTextField = 'rich_text',
+  structuredTextField = 'structured_text'
 }

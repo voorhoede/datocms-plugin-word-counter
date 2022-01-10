@@ -18,12 +18,15 @@ import {
   spaceOptions,
 } from '../../lib/constants'
 import {
+  Fields,
   CountObject,
   SettingOption,
   Parameters,
   GlobalParameters,
 } from '../../lib/types'
 import counter from '../../lib/counter'
+import { structuredTextToString } from '../../lib/structured-text-helpers'
+
 import styles from './FieldAddon.module.css'
 
 type Props = {
@@ -44,8 +47,13 @@ export default function FieldAddon({ ctx }: Props) {
     pluginGlobalParameters?.includeSpace ||
     spaceOptions[0]
 
-  const fieldValue: string = String(get(ctx.formValues, ctx.fieldPath))
-  const fieldStats: CountObject = counter(fieldValue)
+  const fieldValue: any = get(ctx.formValues, ctx.fieldPath)
+  const fieldValueString: string =
+    ctx.field.attributes.field_type === Fields.structuredTextField
+      ? structuredTextToString(fieldValue)
+      : String(fieldValue)
+
+  const fieldStats: CountObject = counter(fieldValueString)
 
   const [showSpaces, setShowSpaces] = useState<boolean>(
     spaceSettings.value === spaceConstants.includeSpaces &&
@@ -164,8 +172,12 @@ export default function FieldAddon({ ctx }: Props) {
               <>
                 <dt>Reading time</dt>
                 <dd>
-                  <span className={styles.statsListItem}>{fieldStats.readingTime}</span>
-                  <span className={`${styles.statsListItem} body--small text-thin`}>
+                  <span className={styles.statsListItem}>
+                    {fieldStats.readingTime}
+                  </span>
+                  <span
+                    className={`${styles.statsListItem} body--small text-thin`}
+                  >
                     Based on {wordsPerMinute} words per minute
                   </span>
                 </dd>
