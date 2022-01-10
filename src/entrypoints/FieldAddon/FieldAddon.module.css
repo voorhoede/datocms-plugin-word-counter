@@ -1,4 +1,5 @@
 .switchField {
+  margin-top: var(--spacing-m);
   margin-bottom: var(--spacing-m);
 }
 
