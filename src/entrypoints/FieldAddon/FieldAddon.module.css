@@ -17,3 +17,7 @@
 .buttonIcon {
   margin-right: var(--spacing-s);
 }
+
+.statsListItem {
+  display: block;
+}
