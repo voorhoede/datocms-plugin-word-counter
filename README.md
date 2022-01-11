@@ -6,7 +6,7 @@
 
 ## Features
 
-* Add to `rich-text`, `structured-text`, `string` and `text` fields or your own selection of these fields.
+* Add to `structured-text`, `string` and `text` fields or your own selection of these fields.
 * See count of words, characters, sentences, paragraphs
 * See an estimate of the reading time
 * See common words
@@ -25,13 +25,12 @@ For this plugin you can configure global settings and configure the plugin per f
 
 ![](https://github.com/voorhoede/datocms-plugin-word-counter/raw/main/docs/word-counter-global-settings.png)
 
-- **Auto apply to fields (switch)**: When enabled this will automatically apply the plugin to all `rich-text`, `structured-text`, `string` and `text` fields.
+- **Auto apply to fields (switch)**: When enabled this will automatically apply the plugin to all `structured-text`, `string` and `text` fields.
 By changing the following setting you can choose on which fields this plugin will be applied.
 
 - **Field where this plugin is enabled (multi select)**: You can choose to which fields the plugin will be applied.
 
 > Options of `Field where this plugin is enabled`:
-> * Rich-text fields
 > * Structured-text fields
 > * String fields
 > * text fields

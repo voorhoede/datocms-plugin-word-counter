@@ -6,7 +6,6 @@ export const fieldsOptions = [
   { label: 'String fields', value: Fields.stringField },
   { label: 'Text fields', value: Fields.textField },
   { label: 'Structured text fields', value: Fields.structuredTextField },
-  { label: 'Rich-text fields', value: Fields.richTextField },
 ]
 
 export const calculationsConstants = {

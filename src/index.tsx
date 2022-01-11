@@ -32,7 +32,6 @@ connect({
         fieldTypes: [
           Fields.textField,
           Fields.stringField,
-          Fields.richTextField,
           Fields.structuredTextField,
         ],
         configurable: true,
