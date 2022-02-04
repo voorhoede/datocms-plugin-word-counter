@@ -3,6 +3,9 @@
   "homepage": "https://github.com/voorhoede/datocms-plugin-word-counter",
   "version": "1.2.2",
   "description": "A plugin for DatoCMS that gives info for text and string fields about word count",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
     "build": "cross-env PUBLIC_URL='.' react-scripts build",
