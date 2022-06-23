@@ -1,7 +1,17 @@
 import { RenderManualFieldExtensionConfigScreenCtx } from 'datocms-plugin-sdk'
-import { Canvas, Form, SelectField, FieldGroup } from 'datocms-react-ui'
+import {
+  Canvas,
+  Form,
+  SelectField,
+  FieldGroup,
+  TextField,
+} from 'datocms-react-ui'
 
-import { spaceOptions, calculationsOptions } from '../../lib/constants'
+import {
+  spaceOptions,
+  calculationsOptions,
+  defaultExposedWordCounterFieldId,
+} from '../../lib/constants'
 import { Parameters, GlobalParameters } from '../../lib/types'
 
 type Props = {
@@ -10,7 +20,8 @@ type Props = {
 
 export default function FieldExtensionConfigScreen({ ctx }: Props) {
   const pluginParameters: Parameters = ctx.parameters
-  const pluginGlobalParameters: GlobalParameters = ctx.plugin.attributes.parameters
+  const pluginGlobalParameters: GlobalParameters =
+    ctx.plugin.attributes.parameters
 
   return (
     <Canvas ctx={ctx}>
@@ -54,6 +65,22 @@ export default function FieldExtensionConfigScreen({ ctx }: Props) {
               ctx.setParameters({
                 ...pluginParameters,
                 includeSpace: newValue,
+              })
+            }}
+          />
+
+          <TextField
+            name="exposedWordCounterFieldId"
+            id="exposedWordCounterFieldId"
+            label="Exposed word counter field id"
+            hint={`The id of the field that will be used to store the word counter. This needs to be a JSON field. Only change if your exposed word counter fieldId isn't the default '{fieldId}_${defaultExposedWordCounterFieldId}'.`}
+            value={
+              pluginParameters?.exposedWordCounterFieldId
+            }
+            onChange={(newValue) => {
+              ctx.setParameters({
+                ...pluginParameters,
+                exposedWordCounterField: newValue,
               })
             }}
           />
