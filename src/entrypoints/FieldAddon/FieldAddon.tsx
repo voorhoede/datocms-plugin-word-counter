@@ -16,6 +16,7 @@ import {
   calculationsConstants,
   calculationsOptions,
   spaceOptions,
+  defaultExposedWordCounterFieldId,
 } from '../../lib/constants'
 import {
   Fields,
@@ -25,6 +26,7 @@ import {
   GlobalParameters,
 } from '../../lib/types'
 import counter from '../../lib/counter'
+import { objectsAreEqual } from '../../lib/helpers'
 import { structuredTextToString } from '../../lib/structured-text-helpers'
 
 import styles from './FieldAddon.module.css'
@@ -34,6 +36,8 @@ type Props = {
 }
 
 export default function FieldAddon({ ctx }: Props) {
+  const fieldKey: string = ctx.field.attributes.api_key
+  const locale: string = ctx.locale
   const pluginGlobalParameters: GlobalParameters =
     ctx.plugin.attributes.parameters
   const pluginParameters: Parameters = ctx.parameters
@@ -54,6 +58,53 @@ export default function FieldAddon({ ctx }: Props) {
       : String(fieldValue)
 
   const fieldStats: CountObject = counter(fieldValueString)
+
+  // If the exposed word counter field is present, we want to expose the wordStats
+  const exposedWordCounterFieldId: Parameters['exposedWordCounterFieldId'] =
+    pluginParameters?.exposedWordCounterFieldId ||
+    `${fieldKey}_${defaultExposedWordCounterFieldId}`
+  const hasExposedWordCounterField: boolean =
+    ctx.formValues[exposedWordCounterFieldId] !== undefined
+
+  if (hasExposedWordCounterField) {
+    const fields: any[] = Object.entries(ctx.fields).map(([_, field]) => field)
+    const wordCounterField: any = fields.find(
+      (field) => field.attributes.api_key === exposedWordCounterFieldId
+    )
+    const isJsonField: boolean =
+      wordCounterField?.attributes.field_type === Fields.jsonField
+
+    if (isJsonField) {
+      const isWordCounterFieldLocalized: boolean =
+        wordCounterField?.attributes.localized
+      const wordCounterPath: string = isWordCounterFieldLocalized
+        ? `${exposedWordCounterFieldId}.${locale}`
+        : exposedWordCounterFieldId
+
+      ctx.toggleField(wordCounterPath, false)
+
+      const fullExposedWordCounter: any = get(
+        ctx.formValues,
+        exposedWordCounterFieldId
+      )
+      const exposedWordCounter: any = isWordCounterFieldLocalized
+        ? JSON.parse(fullExposedWordCounter[locale])
+        : JSON.parse(fullExposedWordCounter)
+
+      const newExposedWordCounter: any = fieldStats
+      const countsAreEqual = objectsAreEqual(
+        exposedWordCounter,
+        newExposedWordCounter
+      )
+
+      if (!countsAreEqual) {
+        ctx.setFieldValue(
+          wordCounterPath,
+          JSON.stringify(newExposedWordCounter)
+        )
+      }
+    }
+  }
 
   const [showSpaces, setShowSpaces] = useState<boolean>(
     spaceSettings.value === spaceConstants.includeSpaces &&
