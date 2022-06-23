@@ -12,6 +12,7 @@
 * See common words
 * Full control over the visible calculations
 * Be able to choose to add spaces and enters in the calculations
+* Expose the count and use it from the API
 
 ## Configuration
 
@@ -55,6 +56,41 @@ By changing the following setting you can choose on which fields this plugin wil
 > * Show switch to toggle spaces
 > * Always include spaces
 > * Never include spaces
+
+#### **Expose word count**
+
+With this word counter plugin you can expose the word count results in the API. To do this you have to specify a new field in the model where the word counter is implemented. The field that is added will automatically be hidden, but will still be exposed in the API.
+
+- **Exposed word counter field id (text)**: You can use the id of a specific JSON field or leave this blank which will automatically use '{fieldId}_word_counter'
+
+> The field where the stats are being saved has to be a JSON field and make sure the ID isn't used in other fields
+
+![](https://github.com/voorhoede/datocms-plugin-word-counter/raw/main/docs/word-counter-expose.png)
+
+Implementing it like the screenshot will result in:
+```javascript
+{
+  "data": {
+    "page": {
+      "title": "Page title",
+      "titleWordCounter": {
+        "words": 2,
+        "characters": 10,
+        "charactersExcludingSpaces": 9,
+        "specialCharacters": 1,
+        "specialCharactersExcludingSpaces": 0,
+        "sentences": 1,
+        "paragraphs": 1,
+        "commonWords": {
+          "page": 1,
+          "title": 1
+        },
+        "readingTime": "< 1 second"
+      }
+    }
+  }
+}
+```
 
 ## Contributing
 
