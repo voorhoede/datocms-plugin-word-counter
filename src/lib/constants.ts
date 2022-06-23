@@ -1,6 +1,7 @@
 import { Fields } from './types'
 
 export const wordsPerMinute = 225
+export const defaultExposedWordCounterFieldId = 'word_counter'
 
 export const fieldsOptions = [
   { label: 'String fields', value: Fields.stringField },

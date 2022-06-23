@@ -22,6 +22,7 @@ export type SettingOption = {
 export type Parameters = {
   calculationsToShow?: SettingOption[]
   includeSpace?: SettingOption
+  exposedWordCounterFieldId?: string
 }
 
 export interface GlobalParameters extends Parameters {
@@ -32,5 +33,6 @@ export interface GlobalParameters extends Parameters {
 export enum Fields {
   stringField = 'string',
   textField = 'text',
-  structuredTextField = 'structured_text'
+  structuredTextField = 'structured_text',
+  jsonField = 'json'
 }
