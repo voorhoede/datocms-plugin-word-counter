@@ -80,7 +80,7 @@ export default function FieldExtensionConfigScreen({ ctx }: Props) {
             onChange={(newValue) => {
               ctx.setParameters({
                 ...pluginParameters,
-                exposedWordCounterField: newValue,
+                exposedWordCounterFieldId: newValue,
               })
             }}
           />
