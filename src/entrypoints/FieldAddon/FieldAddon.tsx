@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo } from 'react'
+import { Fragment, useState, useMemo, useCallback, useEffect } from 'react'
 import get from 'lodash/get'
 import { RenderFieldExtensionCtx } from 'datocms-plugin-sdk'
 import {
@@ -16,11 +16,14 @@ import {
   calculationsConstants,
   calculationsOptions,
   spaceOptions,
+  htmlConstants,
+  htmlOptions,
   defaultExposedWordCounterFieldId,
 } from '../../lib/constants'
 import {
   Fields,
   CountObject,
+  SavingCountObject,
   SettingOption,
   Parameters,
   GlobalParameters,
@@ -36,11 +39,16 @@ type Props = {
 }
 
 export default function FieldAddon({ ctx }: Props) {
-  const fieldKey: string = ctx.field.attributes.api_key
-  const locale: string = ctx.locale
   const pluginGlobalParameters: GlobalParameters =
     ctx.plugin.attributes.parameters
   const pluginParameters: Parameters = ctx.parameters
+  const fieldKey: string = ctx.field.attributes.api_key
+  const locale: string = ctx.locale
+  const exposedWordCounterFieldId: Parameters['exposedWordCounterFieldId'] =
+    pluginParameters?.exposedWordCounterFieldId ||
+    `${fieldKey}_${defaultExposedWordCounterFieldId}`
+  const hasExposedWordCounterField: boolean =
+    ctx.formValues[exposedWordCounterFieldId] !== undefined
 
   const calculationsSettings: SettingOption[] =
     pluginParameters?.calculationsToShow ||
@@ -50,6 +58,10 @@ export default function FieldAddon({ ctx }: Props) {
     pluginParameters?.includeSpace ||
     pluginGlobalParameters?.includeSpace ||
     spaceOptions[0]
+  const htmlSettings: SettingOption =
+    pluginParameters?.includeHTML ||
+    pluginGlobalParameters?.includeHTML ||
+    htmlOptions[0]
 
   const fieldValue: any = get(ctx.formValues, ctx.fieldPath)
   const fieldValueString: string =
@@ -59,59 +71,86 @@ export default function FieldAddon({ ctx }: Props) {
 
   const fieldStats: CountObject = counter(fieldValueString)
 
-  // If the exposed word counter field is present, we want to expose the wordStats
-  const exposedWordCounterFieldId: Parameters['exposedWordCounterFieldId'] =
-    pluginParameters?.exposedWordCounterFieldId ||
-    `${fieldKey}_${defaultExposedWordCounterFieldId}`
-  const hasExposedWordCounterField: boolean =
-    ctx.formValues[exposedWordCounterFieldId] !== undefined
-
-  if (hasExposedWordCounterField) {
-    const fields: any[] = Object.entries(ctx.fields).map(([_, field]) => field)
-    const wordCounterField: any = fields.find(
-      (field) => field.attributes.api_key === exposedWordCounterFieldId
-    )
-    const isJsonField: boolean =
-      wordCounterField?.attributes.field_type === Fields.jsonField
-
-    if (isJsonField) {
-      const isWordCounterFieldLocalized: boolean =
-        wordCounterField?.attributes.localized
-      const wordCounterPath: string = isWordCounterFieldLocalized
-        ? `${exposedWordCounterFieldId}.${locale}`
-        : exposedWordCounterFieldId
-
-      ctx.toggleField(wordCounterPath, false)
-
-      const fullExposedWordCounter: any = get(
-        ctx.formValues,
-        exposedWordCounterFieldId
+  const exposedWordCounter: SavingCountObject | undefined = useMemo(() => {
+    if (hasExposedWordCounterField) {
+      const fields: any[] = Object.entries(ctx.fields).map(
+        ([_, field]) => field
       )
-      const exposedWordCounter: any = isWordCounterFieldLocalized
-        ? JSON.parse(fullExposedWordCounter[locale])
-        : JSON.parse(fullExposedWordCounter)
-
-      const newExposedWordCounter: any = fieldStats
-      const countsAreEqual = objectsAreEqual(
-        exposedWordCounter,
-        newExposedWordCounter
+      const wordCounterField: any = fields.find(
+        (field) => field.attributes.api_key === exposedWordCounterFieldId
       )
+      const isJsonField: boolean =
+        wordCounterField?.attributes.field_type === Fields.jsonField
 
-      if (!countsAreEqual) {
-        ctx.setFieldValue(
-          wordCounterPath,
-          JSON.stringify(newExposedWordCounter)
+      if (isJsonField) {
+        const isWordCounterFieldLocalized: boolean =
+          wordCounterField?.attributes.localized
+        const wordCounterPath: string = isWordCounterFieldLocalized
+          ? `${exposedWordCounterFieldId}.${locale}`
+          : exposedWordCounterFieldId
+
+        ctx.toggleField(wordCounterPath, false)
+
+        const fullExposedWordCounter: any = get(
+          ctx.formValues,
+          exposedWordCounterFieldId
         )
-      }
-    }
-  }
+        const exposedWordCounter: SavingCountObject =
+          isWordCounterFieldLocalized
+            ? JSON.parse(fullExposedWordCounter[locale])
+            : JSON.parse(fullExposedWordCounter)
 
-  const [showSpaces, setShowSpaces] = useState<boolean>(
-    spaceSettings.value === spaceConstants.includeSpaces &&
-      spaceSettings.value !== spaceConstants.excludeSpaces
+        return exposedWordCounter
+      }
+      return undefined
+    }
+    return undefined
+  }, [ctx, exposedWordCounterFieldId, hasExposedWordCounterField, locale])
+
+  const saveExposedWordCount = useCallback(
+    (newExposedWordCounter: SavingCountObject) => {
+      // If the exposed word counter field is present, we want to expose the wordStats
+      if (hasExposedWordCounterField) {
+        const fields: any[] = Object.entries(ctx.fields).map(
+          ([_, field]) => field
+        )
+        const wordCounterField: any = fields.find(
+          (field) => field.attributes.api_key === exposedWordCounterFieldId
+        )
+        const isJsonField: boolean =
+          wordCounterField?.attributes.field_type === Fields.jsonField
+
+        if (isJsonField) {
+          const isWordCounterFieldLocalized: boolean =
+            wordCounterField?.attributes.localized
+          const wordCounterPath: string = isWordCounterFieldLocalized
+            ? `${exposedWordCounterFieldId}.${locale}`
+            : exposedWordCounterFieldId
+
+          ctx.toggleField(wordCounterPath, false)
+
+          const countsAreEqual = objectsAreEqual(
+            exposedWordCounter,
+            newExposedWordCounter
+          )
+
+          if (!countsAreEqual) {
+            ctx.setFieldValue(
+              wordCounterPath,
+              JSON.stringify(newExposedWordCounter)
+            )
+          }
+        }
+      }
+    },
+    [
+      ctx,
+      exposedWordCounterFieldId,
+      hasExposedWordCounterField,
+      locale,
+      exposedWordCounter,
+    ]
   )
-  const [showInfo, setShowInfo] = useState<boolean>(false)
-  const [showCommonWords, setShowCommonWords] = useState<boolean>(false)
 
   const showSpacesSwitch: boolean = useMemo(() => {
     return (
@@ -125,11 +164,99 @@ export default function FieldAddon({ ctx }: Props) {
     )
   }, [spaceSettings, calculationsSettings])
 
+  const showHTMLSwitch: boolean = useMemo(() => {
+    return (
+      htmlSettings.value !== htmlConstants.includeHTML &&
+      htmlSettings.value !== htmlConstants.excludeHTML &&
+      calculationsSettings.some(
+        (setting) =>
+          setting.value === calculationsConstants.numberOfCharacters ||
+          setting.value === calculationsConstants.numberOfSpecialCharacters
+      )
+    )
+  }, [htmlSettings, calculationsSettings])
+
+  const [showSpaces, setShowSpaces] = useState<boolean>(
+    showSpacesSwitch
+      ? exposedWordCounter?.settings?.includeSpace || false
+      : spaceSettings.value === spaceConstants.includeSpaces &&
+          spaceSettings.value !== spaceConstants.excludeSpaces
+  )
+  const [showHTML, setShowHTML] = useState<boolean>(
+    showHTMLSwitch
+      ? exposedWordCounter?.settings?.includeHTML || false
+      : htmlSettings.value === htmlConstants.includeHTML &&
+          htmlSettings.value !== htmlConstants.excludeHTML
+  )
+  const [showInfo, setShowInfo] = useState<boolean>(false)
+  const [showCommonWords, setShowCommonWords] = useState<boolean>(false)
+
+  const wordCount: SavingCountObject = useMemo(() => {
+    const {
+      words,
+      characters,
+      specialCharacters,
+      sentences,
+      paragraphs,
+      commonWords,
+      readingTime,
+    } = fieldStats
+
+    const defaultStats: SavingCountObject = {
+      words,
+      characters,
+      specialCharacters,
+      sentences,
+      paragraphs,
+      commonWords,
+      readingTime,
+      settings: {
+        includeSpace: showSpaces,
+        includeHTML: showHTML,
+      },
+    }
+
+    if (!showSpaces && !showHTML) {
+      return {
+        ...defaultStats,
+        characters: fieldStats.charactersExcludingSpacesAndHTMLElements,
+        specialCharacters:
+          fieldStats.specialCharactersExcludingSpacesAndHTMLElements,
+        words: fieldStats.wordsExcludingHTMLElements,
+        commonWords: fieldStats.commonWordsExcludingHTMLElements,
+      }
+    }
+
+    if (!showSpaces) {
+      return {
+        ...defaultStats,
+        characters: fieldStats.charactersExcludingSpaces,
+        specialCharacters: fieldStats.specialCharactersExcludingSpaces,
+      }
+    }
+
+    if (!showHTML) {
+      return {
+        ...defaultStats,
+        words: fieldStats.wordsExcludingHTMLElements,
+        characters: fieldStats.charactersExcludingHTMLElements,
+        specialCharacters: fieldStats.specialCharactersExcludingHTMLElements,
+        commonWords: fieldStats.commonWordsExcludingHTMLElements,
+      }
+    }
+
+    return defaultStats
+  }, [showSpaces, showHTML, fieldStats])
+
+  useEffect(() => {
+    saveExposedWordCount(wordCount)
+  }, [saveExposedWordCount, wordCount])
+
   if (calculationsSettings.length === 0) {
     return (
       <Canvas ctx={ctx}>
         <p className="body">
-          Words: <span className="text-bold">{fieldStats.words}</span>
+          Words: <span className="text-bold">{wordCount.words}</span>
         </p>
       </Canvas>
     )
@@ -141,7 +268,7 @@ export default function FieldAddon({ ctx }: Props) {
         <button className={styles.button} onClick={() => setShowInfo(true)}>
           <CaretDownIcon className={styles.buttonIcon} />
           <span className="body">
-            Words: <span className="text-bold">{fieldStats.words}</span>
+            Words: <span className="text-bold">{wordCount.words}</span>
           </span>
         </button>
       )}
@@ -158,7 +285,7 @@ export default function FieldAddon({ ctx }: Props) {
                 <span className="body">Words</span>
               </button>
             </dt>
-            <dd>{fieldStats.words}</dd>
+            <dd>{wordCount.words}</dd>
 
             {calculationsSettings.some(
               (setting) =>
@@ -166,11 +293,7 @@ export default function FieldAddon({ ctx }: Props) {
             ) ? (
               <>
                 <dt>Characters</dt>
-                <dd>
-                  {showSpaces
-                    ? fieldStats.characters
-                    : fieldStats.charactersExcludingSpaces}
-                </dd>
+                <dd>{wordCount.characters}</dd>
               </>
             ) : (
               <></>
@@ -183,11 +306,7 @@ export default function FieldAddon({ ctx }: Props) {
             ) ? (
               <>
                 <dt>Special characters</dt>
-                <dd>
-                  {showSpaces
-                    ? fieldStats.specialCharacters
-                    : fieldStats.specialCharactersExcludingSpaces}
-                </dd>
+                <dd>{wordCount.specialCharacters}</dd>
               </>
             ) : (
               <></>
@@ -199,7 +318,7 @@ export default function FieldAddon({ ctx }: Props) {
             ) ? (
               <>
                 <dt>Sentences</dt>
-                <dd>{fieldStats.sentences}</dd>
+                <dd>{wordCount.sentences}</dd>
               </>
             ) : (
               <></>
@@ -211,7 +330,7 @@ export default function FieldAddon({ ctx }: Props) {
             ) ? (
               <>
                 <dt>Paragraphs</dt>
-                <dd>{fieldStats.paragraphs}</dd>
+                <dd>{wordCount.paragraphs}</dd>
               </>
             ) : (
               <></>
@@ -224,7 +343,7 @@ export default function FieldAddon({ ctx }: Props) {
                 <dt>Reading time</dt>
                 <dd>
                   <span className={styles.statsListItem}>
-                    {fieldStats.readingTime}
+                    {wordCount.readingTime}
                   </span>
                   <span
                     className={`${styles.statsListItem} body--small text-thin`}
@@ -250,40 +369,50 @@ export default function FieldAddon({ ctx }: Props) {
             </div>
           )}
 
-          {Object.keys(fieldStats.commonWords).length > 0 &&
-            calculationsSettings.some(
-              (setting) =>
-                setting.value === calculationsConstants.showCommonWords
-            ) && (
-              <>
-                <button
-                  className={styles.button}
-                  onClick={() => setShowCommonWords(!showCommonWords)}
-                >
-                  {showCommonWords ? (
-                    <CaretUpIcon className={styles.buttonIcon} />
-                  ) : (
-                    <CaretDownIcon className={styles.buttonIcon} />
-                  )}
-                  <span className="h2">
-                    {`Common words (${
-                      Object.keys(fieldStats.commonWords).length
-                    })`}
-                  </span>
-                </button>
+          {showHTMLSwitch && (
+            <div className={styles.switchField}>
+              <SwitchField
+                id="showHTML"
+                name="showHTML"
+                label="Include HTML elements"
+                value={showHTML}
+                onChange={() => setShowHTML(!showHTML)}
+              />
+            </div>
+          )}
 
-                {showCommonWords && (
-                  <StatsList list>
-                    {Object.keys(fieldStats.commonWords).map((word) => (
-                      <Fragment key={word}>
-                        <dt>{word}</dt>
-                        <dd>{fieldStats.commonWords[word]}</dd>
-                      </Fragment>
-                    ))}
-                  </StatsList>
+          {calculationsSettings.some(
+            (setting) => setting.value === calculationsConstants.showCommonWords
+          ) && (
+            <>
+              <button
+                className={styles.button}
+                onClick={() => setShowCommonWords(!showCommonWords)}
+              >
+                {showCommonWords ? (
+                  <CaretUpIcon className={styles.buttonIcon} />
+                ) : (
+                  <CaretDownIcon className={styles.buttonIcon} />
                 )}
-              </>
-            )}
+                <span className="h2">
+                  {`Common words (${
+                    Object.keys(wordCount.commonWords).length
+                  })`}
+                </span>
+              </button>
+
+              {showCommonWords && (
+                <StatsList list>
+                  {Object.keys(wordCount.commonWords).map((word) => (
+                    <Fragment key={word}>
+                      <dt>{word}</dt>
+                      <dd>{wordCount.commonWords[word]}</dd>
+                    </Fragment>
+                  ))}
+                </StatsList>
+              )}
+            </>
+          )}
         </>
       )}
     </Canvas>
