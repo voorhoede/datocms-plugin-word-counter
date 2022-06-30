@@ -57,6 +57,13 @@ By changing the following setting you can choose on which fields this plugin wil
 > * Always include spaces
 > * Never include spaces
 
+- **Include HMTL elements (select)**: You can choose if html elements are taken into account in the calculations shown in the plugin. The default `Show switch to toggle HTML elements` will show a switch to let the user choose themselves.
+
+> Options of `Include HTML elements`:
+> * Show switch to HTML elements
+> * Always include HTML elements
+> * Never include HTML elements
+
 #### **Expose word count**
 
 With this word counter plugin you can expose the word count results in the API. To do this you have to specify a new field in the model where the word counter is implemented. The field that is added will automatically be hidden, but will still be exposed in the API.
