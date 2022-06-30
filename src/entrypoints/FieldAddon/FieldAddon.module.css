@@ -22,3 +22,7 @@
 .statsListItem {
   display: block;
 }
+
+.buttonIconError {
+  fill: var(--alert-color);
+}
