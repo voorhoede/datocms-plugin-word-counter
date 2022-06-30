@@ -1,7 +1,7 @@
 {
   "name": "datocms-plugin-word-counter",
   "homepage": "https://github.com/voorhoede/datocms-plugin-word-counter",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A plugin for DatoCMS that gives info for text and string fields about word count",
   "engines": {
     "node": ">=16.0.0"
