@@ -71,7 +71,7 @@ export default function FieldAddon({ ctx }: Props) {
 
   const fieldStats: CountObject = counter(fieldValueString)
 
-  const exposedWordCounter: SavingCountObject | undefined = useMemo(() => {
+  const wordCounterField: any = useMemo(() => {
     if (hasExposedWordCounterField) {
       const fields: any[] = Object.entries(ctx.fields).map(
         ([_, field]) => field
@@ -79,76 +79,79 @@ export default function FieldAddon({ ctx }: Props) {
       const wordCounterField: any = fields.find(
         (field) => field.attributes.api_key === exposedWordCounterFieldId
       )
-      const isJsonField: boolean =
-        wordCounterField?.attributes.field_type === Fields.jsonField
+      return wordCounterField
+    }
+    return
+  }, [ctx, exposedWordCounterFieldId, hasExposedWordCounterField])
 
-      if (isJsonField) {
-        const isWordCounterFieldLocalized: boolean =
-          wordCounterField?.attributes.localized
-        const wordCounterPath: string = isWordCounterFieldLocalized
+  const wordCounterFieldIsJson: boolean = useMemo(() => {
+    const isJsonField: boolean =
+      wordCounterField?.attributes.field_type === Fields.jsonField
+    return isJsonField
+  }, [wordCounterField])
+
+  const wordCounterFieldIsLocalized: boolean = useMemo(() => {
+    const isLocalized: boolean = wordCounterField?.attributes.localized
+    return isLocalized
+  }, [wordCounterField])
+
+  const exposedWordCounter: SavingCountObject | undefined = useMemo(() => {
+    if (wordCounterFieldIsJson) {
+      const wordCounterPath: string = wordCounterFieldIsLocalized
+        ? `${exposedWordCounterFieldId}.${locale}`
+        : exposedWordCounterFieldId
+
+      ctx.toggleField(wordCounterPath, false)
+
+      const fullExposedWordCounter: any = get(
+        ctx.formValues,
+        exposedWordCounterFieldId
+      )
+      const exposedWordCounter: SavingCountObject = wordCounterFieldIsLocalized
+        ? JSON.parse(fullExposedWordCounter[locale])
+        : JSON.parse(fullExposedWordCounter)
+
+      return exposedWordCounter
+    }
+    return undefined
+  }, [
+    ctx,
+    locale,
+    exposedWordCounterFieldId,
+    wordCounterFieldIsJson,
+    wordCounterFieldIsLocalized,
+  ])
+
+  const saveExposedWordCount = useCallback(
+    (newExposedWordCounter: SavingCountObject) => {
+      // If the exposed word counter field is present, we want to expose the wordStats
+      if (wordCounterFieldIsJson) {
+        const wordCounterPath: string = wordCounterFieldIsLocalized
           ? `${exposedWordCounterFieldId}.${locale}`
           : exposedWordCounterFieldId
 
         ctx.toggleField(wordCounterPath, false)
 
-        const fullExposedWordCounter: any = get(
-          ctx.formValues,
-          exposedWordCounterFieldId
+        const countsAreEqual = objectsAreEqual(
+          exposedWordCounter,
+          newExposedWordCounter
         )
-        const exposedWordCounter: SavingCountObject =
-          isWordCounterFieldLocalized
-            ? JSON.parse(fullExposedWordCounter[locale])
-            : JSON.parse(fullExposedWordCounter)
 
-        return exposedWordCounter
-      }
-      return undefined
-    }
-    return undefined
-  }, [ctx, exposedWordCounterFieldId, hasExposedWordCounterField, locale])
-
-  const saveExposedWordCount = useCallback(
-    (newExposedWordCounter: SavingCountObject) => {
-      // If the exposed word counter field is present, we want to expose the wordStats
-      if (hasExposedWordCounterField) {
-        const fields: any[] = Object.entries(ctx.fields).map(
-          ([_, field]) => field
-        )
-        const wordCounterField: any = fields.find(
-          (field) => field.attributes.api_key === exposedWordCounterFieldId
-        )
-        const isJsonField: boolean =
-          wordCounterField?.attributes.field_type === Fields.jsonField
-
-        if (isJsonField) {
-          const isWordCounterFieldLocalized: boolean =
-            wordCounterField?.attributes.localized
-          const wordCounterPath: string = isWordCounterFieldLocalized
-            ? `${exposedWordCounterFieldId}.${locale}`
-            : exposedWordCounterFieldId
-
-          ctx.toggleField(wordCounterPath, false)
-
-          const countsAreEqual = objectsAreEqual(
-            exposedWordCounter,
-            newExposedWordCounter
+        if (!countsAreEqual) {
+          ctx.setFieldValue(
+            wordCounterPath,
+            JSON.stringify(newExposedWordCounter)
           )
-
-          if (!countsAreEqual) {
-            ctx.setFieldValue(
-              wordCounterPath,
-              JSON.stringify(newExposedWordCounter)
-            )
-          }
         }
       }
     },
     [
       ctx,
-      exposedWordCounterFieldId,
-      hasExposedWordCounterField,
       locale,
+      exposedWordCounterFieldId,
+      wordCounterFieldIsJson,
       exposedWordCounter,
+      wordCounterFieldIsLocalized,
     ]
   )
 
