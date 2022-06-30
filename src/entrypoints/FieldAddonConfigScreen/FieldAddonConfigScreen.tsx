@@ -9,6 +9,7 @@ import {
 
 import {
   spaceOptions,
+  htmlOptions,
   calculationsOptions,
   defaultExposedWordCounterFieldId,
 } from '../../lib/constants'
@@ -69,14 +70,33 @@ export default function FieldExtensionConfigScreen({ ctx }: Props) {
             }}
           />
 
+          <SelectField
+            name="includeHTML"
+            id="includeHTML"
+            label="Include HTML elements"
+            hint="For calculating characters you can choose to include HTML elements in the count."
+            value={
+              pluginParameters?.includeHTML ||
+              pluginGlobalParameters?.includeHTML ||
+              htmlOptions[0]
+            }
+            selectInputProps={{
+              options: htmlOptions,
+            }}
+            onChange={(newValue) => {
+              ctx.setParameters({
+                ...pluginParameters,
+                includeHTML: newValue,
+              })
+            }}
+          />
+
           <TextField
             name="exposedWordCounterFieldId"
             id="exposedWordCounterFieldId"
             label="Exposed word counter field id"
             hint={`The id of the field that will be used to store the word counter. This needs to be a JSON field. Only change if your exposed word counter fieldId isn't the default '{fieldId}_${defaultExposedWordCounterFieldId}'.`}
-            value={
-              pluginParameters?.exposedWordCounterFieldId
-            }
+            value={pluginParameters?.exposedWordCounterFieldId}
             onChange={(newValue) => {
               ctx.setParameters({
                 ...pluginParameters,

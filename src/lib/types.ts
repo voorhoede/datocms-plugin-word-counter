@@ -1,13 +1,35 @@
 export type CountObject = {
   words: number
+  wordsExcludingHTMLElements: number
   characters: number
   charactersExcludingSpaces: number
+  charactersExcludingHTMLElements: number
+  charactersExcludingSpacesAndHTMLElements: number
   specialCharacters: number
   specialCharactersExcludingSpaces: number
+  specialCharactersExcludingHTMLElements: number
+  specialCharactersExcludingSpacesAndHTMLElements: number
   sentences: number
   paragraphs: number
   commonWords: CommonWordsObject
+  commonWordsExcludingHTMLElements: CommonWordsObject
   readingTime: string
+}
+
+export type SavingCountObject = Pick<
+  CountObject,
+  | 'words'
+  | 'characters'
+  | 'specialCharacters'
+  | 'sentences'
+  | 'paragraphs'
+  | 'commonWords'
+  | 'readingTime'
+> & {
+  settings: {
+    includeSpace: boolean
+    includeHTML: boolean
+  }
 }
 
 export type CommonWordsObject = {
@@ -22,6 +44,7 @@ export type SettingOption = {
 export type Parameters = {
   calculationsToShow?: SettingOption[]
   includeSpace?: SettingOption
+  includeHTML?: SettingOption
   exposedWordCounterFieldId?: string
 }
 

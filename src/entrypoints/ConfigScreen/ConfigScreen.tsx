@@ -9,6 +9,7 @@ import {
 
 import {
   spaceOptions,
+  htmlOptions,
   calculationsOptions,
   fieldsOptions,
 } from '../../lib/constants'
@@ -100,6 +101,24 @@ export default function ConfigScreen({ ctx }: Props) {
                 ctx.updatePluginParameters({
                   ...pluginParameters,
                   includeSpace: newValue,
+                })
+                ctx.notice('Settings updated successfully!')
+              }}
+            />
+
+            <SelectField
+              name="includeHTML"
+              id="includeHTML"
+              label="Include HTML elements"
+              hint="For calculating characters you can choose to include HTML elements in the count."
+              value={pluginParameters?.includeHTML || htmlOptions[0]}
+              selectInputProps={{
+                options: htmlOptions,
+              }}
+              onChange={(newValue) => {
+                ctx.updatePluginParameters({
+                  ...pluginParameters,
+                  includeHTML: newValue,
                 })
                 ctx.notice('Settings updated successfully!')
               }}

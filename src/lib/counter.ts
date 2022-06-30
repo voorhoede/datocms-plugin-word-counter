@@ -1,24 +1,34 @@
 import { CountObject, CommonWordsObject } from './types'
-import { wordsPerMinute } from './constants'
+import { wordsPerMinute, htmlElements } from './constants'
 
 export default function counter(string: string): CountObject {
   const stringExcludingSpaces = string.replace(/\s/g, '')
+  const htmlElementsString = htmlElements.join('|')
+  const htmlRegex = new RegExp(`</?(${htmlElementsString})>`, 'gi')
+  const stringExcludingHTMLElements = string.replace(htmlRegex, '')
+  const stringExcludingSpacesAndHTMLElements = string.replace(/\s/g, '').replace(htmlRegex, '')
 
   return {
     words: wordCounter(string),
+    wordsExcludingHTMLElements: wordCounter(stringExcludingHTMLElements),
     characters: string.length,
     charactersExcludingSpaces: stringExcludingSpaces.length,
+    charactersExcludingHTMLElements: stringExcludingHTMLElements.length,
+    charactersExcludingSpacesAndHTMLElements: stringExcludingSpacesAndHTMLElements.length,
     specialCharacters: specialCharacterCounter(string),
     specialCharactersExcludingSpaces: specialCharacterCounter(stringExcludingSpaces),
+    specialCharactersExcludingHTMLElements: specialCharacterCounter(stringExcludingHTMLElements),
+    specialCharactersExcludingSpacesAndHTMLElements: specialCharacterCounter(stringExcludingSpacesAndHTMLElements),
     sentences: sentencesCounter(string),
     paragraphs: paragraphsCounter(string),
     commonWords: commonWords(string),
+    commonWordsExcludingHTMLElements: commonWords(stringExcludingHTMLElements),
     readingTime: readingTimeCounter(string),
   }
 }
 
 function wordCounter(string: string): number {
-  const wordRegex = /[ \n|/]/
+  const wordRegex = /[ \n]/
   const words = string.split(wordRegex).filter(hasNoSpace)
   return words.length
 }
