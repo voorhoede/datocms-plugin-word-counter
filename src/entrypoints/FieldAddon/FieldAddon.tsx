@@ -44,11 +44,14 @@ export default function FieldAddon({ ctx }: Props) {
   const pluginParameters: Parameters = ctx.parameters
   const fieldKey: string = ctx.field.attributes.api_key
   const locale: string = ctx.locale
+
   const exposedWordCounterFieldId: Parameters['exposedWordCounterFieldId'] =
     pluginParameters?.exposedWordCounterFieldId ||
     `${fieldKey}_${defaultExposedWordCounterFieldId}`
   const hasExposedWordCounterField: boolean =
     ctx.formValues[exposedWordCounterFieldId] !== undefined
+
+  const validationLength: any = ctx.field.attributes.validators?.length
 
   const calculationsSettings: SettingOption[] =
     pluginParameters?.calculationsToShow ||
@@ -124,7 +127,7 @@ export default function FieldAddon({ ctx }: Props) {
 
   const saveExposedWordCount = useCallback(
     (newExposedWordCounter: SavingCountObject) => {
-      // If the exposed word counter field is present, we want to expose the wordStats
+      // If the exposed word counter field is present, we want to expose the newExposedWordCounter
       if (wordCounterFieldIsJson) {
         const wordCounterPath: string = wordCounterFieldIsLocalized
           ? `${exposedWordCounterFieldId}.${locale}`
@@ -269,7 +272,14 @@ export default function FieldAddon({ ctx }: Props) {
     <Canvas ctx={ctx}>
       {!showInfo && (
         <button className={styles.button} onClick={() => setShowInfo(true)}>
-          <CaretDownIcon className={styles.buttonIcon} />
+          <CaretDownIcon
+            className={`${styles.buttonIcon} ${
+              fieldStats.characters > validationLength?.max ||
+              fieldStats.characters < validationLength?.min
+                ? styles.buttonIconError
+                : ''
+            }`.trim()}
+          />
           <span className="body">
             Words: <span className="text-bold">{wordCount.words}</span>
           </span>
@@ -284,7 +294,14 @@ export default function FieldAddon({ ctx }: Props) {
                 className={styles.button}
                 onClick={() => setShowInfo(false)}
               >
-                <CaretUpIcon className={styles.buttonIcon} />
+                <CaretUpIcon
+                  className={`${styles.buttonIcon} ${
+                    fieldStats.characters > validationLength?.max ||
+                    fieldStats.characters < validationLength?.min
+                      ? styles.buttonIconError
+                      : ''
+                  }`.trim()}
+                />
                 <span className="body">Words</span>
               </button>
             </dt>
@@ -296,7 +313,46 @@ export default function FieldAddon({ ctx }: Props) {
             ) ? (
               <>
                 <dt>Characters</dt>
-                <dd>{wordCount.characters}</dd>
+                <dd>
+                  <span
+                    className={
+                      fieldStats.characters > validationLength?.max ||
+                      fieldStats.characters < validationLength?.min
+                        ? ' text-error'
+                        : ''
+                    }
+                  >
+                    {wordCount.characters}
+                    {validationLength?.max &&
+                      (validationLength?.min
+                        ? fieldStats.characters >= validationLength?.min
+                        : true) && (
+                        <>
+                          {' '}
+                          {showSpaces ? (
+                            <span className="body--medium">
+                              / {validationLength?.max}
+                            </span>
+                          ) : (
+                            <span className="body--medium">
+                              ({fieldStats.characters} / {validationLength?.max}
+                              )
+                            </span>
+                          )}
+                        </>
+                      )}
+                    {validationLength?.min &&
+                      fieldStats.characters < validationLength?.min && (
+                        <>
+                          {' '}
+                          <span className="body--medium">
+                            ({validationLength?.min - fieldStats.characters}{' '}
+                            characters needed)
+                          </span>
+                        </>
+                      )}
+                  </span>
+                </dd>
               </>
             ) : (
               <></>

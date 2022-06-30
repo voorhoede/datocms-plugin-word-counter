@@ -34,12 +34,21 @@ p {
   font-family: var(--base-font-family);
 }
 
+.body--medium {
+  font-size: var(--font-size-xs);
+}
+
+
 .body--small {
   font-size: var(--font-size-xxs);
 }
 
 .text-thin {
   font-weight: normal;
+}
+
+.text-error {
+  color: var(--alert-color);
 }
 
 strong,
