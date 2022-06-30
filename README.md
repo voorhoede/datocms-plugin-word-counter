@@ -78,21 +78,23 @@ Implementing it like the screenshot will result in:
 ```javascript
 {
   "data": {
-    "page": {
+    "wordCounterPage": {
       "title": "Page title",
       "titleWordCounter": {
         "words": 2,
         "characters": 10,
-        "charactersExcludingSpaces": 9,
         "specialCharacters": 1,
-        "specialCharactersExcludingSpaces": 0,
         "sentences": 1,
         "paragraphs": 1,
         "commonWords": {
           "page": 1,
           "title": 1
         },
-        "readingTime": "< 1 second"
+        "readingTime": "< 1 second",
+        "settings": {
+          "includeSpace": true,
+          "includeHTML": true
+        }
       }
     }
   }
