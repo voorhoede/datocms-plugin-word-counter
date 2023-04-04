@@ -292,7 +292,12 @@ export default function FieldAddon({ ctx }: Props) {
             <dt>
               <button
                 className={styles.button}
-                onClick={() => setShowInfo(false)}
+                onClick={() => {
+                  setShowInfo(false)
+                  setTimeout(() => {
+                    ctx.updateHeight(0)
+                  }, 1)
+                }}
               >
                 <CaretUpIcon
                   className={`${styles.buttonIcon} ${
@@ -446,7 +451,14 @@ export default function FieldAddon({ ctx }: Props) {
             <>
               <button
                 className={styles.button}
-                onClick={() => setShowCommonWords(!showCommonWords)}
+                onClick={() => {
+                  setShowCommonWords(!showCommonWords)
+                  if (showCommonWords) {
+                    setTimeout(() => {
+                      ctx.updateHeight(0)
+                    }, 1)
+                  }
+                }}
               >
                 {showCommonWords ? (
                   <CaretUpIcon className={styles.buttonIcon} />
