@@ -104,7 +104,3 @@ Implementing it like the screenshot will result in:
 ## Contributing
 
 See [contributing.md](https://github.com/voorhoede/datocms-plugin-word-counter/blob/main/contributing.md).
-
-## License
-
-*MIT Licensed* by [De Voorhoede](https://www.voorhoede.nl).
