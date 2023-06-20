@@ -11,8 +11,28 @@
     "build": "cross-env PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prepublishOnly": "npm run build"
+    "prepack": "npm run build",
+    "postversion": "git push --follow-tags"
   },
+  "dependencies": {
+    "@types/lodash": "^4.14.192",
+    "@types/node": "^18.15.11",
+    "@types/react": "^18.0.33",
+    "@types/react-dom": "^18.0.11",
+    "datocms-plugin-sdk": "^0.7.4",
+    "datocms-react-ui": "^0.7.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "react-scripts": "^5.0.1"
+  },
+  "files": [
+    "build",
+    "docs"
+  ],
   "keywords": [
     "datocms",
     "datocms-plugin",
@@ -34,12 +54,12 @@
     "statistics",
     "stats"
   ],
-  "files": [
-    "build",
-    "docs"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voorhoede/datocms-plugin-word-counter.git"
+  },
   "author": "Voorhoede",
-  "license": "MIT",
+  "license": "ISC",
   "datoCmsPlugin": {
     "title": "Word counter",
     "previewImage": "docs/preview.mp4",
@@ -62,20 +82,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "react-scripts": "^5.0.1"
-  },
-  "dependencies": {
-    "@types/lodash": "^4.14.192",
-    "@types/node": "^18.15.11",
-    "@types/react": "^18.0.33",
-    "@types/react-dom": "^18.0.11",
-    "datocms-plugin-sdk": "^0.7.4",
-    "datocms-react-ui": "^0.7.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^4.9.5"
   }
 }
