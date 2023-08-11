@@ -6,7 +6,9 @@ export default function counter(string: string): CountObject {
   const htmlElementsString = htmlElements.join('|')
   const htmlRegex = new RegExp(`</?(${htmlElementsString})>`, 'gi')
   const stringExcludingHTMLElements = string.replace(htmlRegex, '')
-  const stringExcludingSpacesAndHTMLElements = string.replace(/\s/g, '').replace(htmlRegex, '')
+  const stringExcludingSpacesAndHTMLElements = string
+    .replace(/\s/g, '')
+    .replace(htmlRegex, '')
 
   return {
     words: wordCounter(string),
@@ -14,11 +16,18 @@ export default function counter(string: string): CountObject {
     characters: string.length,
     charactersExcludingSpaces: stringExcludingSpaces.length,
     charactersExcludingHTMLElements: stringExcludingHTMLElements.length,
-    charactersExcludingSpacesAndHTMLElements: stringExcludingSpacesAndHTMLElements.length,
+    charactersExcludingSpacesAndHTMLElements:
+      stringExcludingSpacesAndHTMLElements.length,
     specialCharacters: specialCharacterCounter(string),
-    specialCharactersExcludingSpaces: specialCharacterCounter(stringExcludingSpaces),
-    specialCharactersExcludingHTMLElements: specialCharacterCounter(stringExcludingHTMLElements),
-    specialCharactersExcludingSpacesAndHTMLElements: specialCharacterCounter(stringExcludingSpacesAndHTMLElements),
+    specialCharactersExcludingSpaces: specialCharacterCounter(
+      stringExcludingSpaces,
+    ),
+    specialCharactersExcludingHTMLElements: specialCharacterCounter(
+      stringExcludingHTMLElements,
+    ),
+    specialCharactersExcludingSpacesAndHTMLElements: specialCharacterCounter(
+      stringExcludingSpacesAndHTMLElements,
+    ),
     sentences: sentencesCounter(string),
     paragraphs: paragraphsCounter(string),
     commonWords: commonWords(string),
@@ -37,10 +46,13 @@ function specialCharacterCounter(string: string): number {
   let specialCharacters = 0
 
   for (let i = 0; i < string.length; i++) {
-    const code = string.charCodeAt(i);
-    if ((code < 47 || code > 58) && // != numeric (0-9)
+    const code = string.charCodeAt(i)
+    if (
+      (code < 47 || code > 58) && // != numeric (0-9)
       (code < 64 || code > 91) && // != upper alpha (A-Z)
-      (code < 96 || code > 123)) { // != lower alpha (a-z)
+      (code < 96 || code > 123)
+    ) {
+      // != lower alpha (a-z)
       specialCharacters++
     }
   }
@@ -64,18 +76,22 @@ function commonWords(string: string): CommonWordsObject {
   const wordRegex = /[ \n]/
   const words = string.split(wordRegex)
   const normalizedWords = words
-    .map(word => word
-      .replace(/["|'-(){}[\]]/g, '')
-      .replace(/[.,!?;:]\s*$/, '')
-      .toLowerCase()
+    .map((word) =>
+      word
+        .replace(/["|'-(){}[\]]/g, '')
+        .replace(/[.,!?;:]\s*$/, '')
+        .toLowerCase(),
     )
     .sort()
     .filter(hasNoSpace)
 
-  const wordCount = normalizedWords.reduce((acc: CommonWordsObject, word: string) => {
-    acc[word] = (acc[word] || 0) + 1
-    return acc
-  }, {})
+  const wordCount = normalizedWords.reduce(
+    (acc: CommonWordsObject, word: string) => {
+      acc[word] = (acc[word] || 0) + 1
+      return acc
+    },
+    {},
+  )
 
   return Object.entries(wordCount)
     .sort(([, a]: any, [, b]: any) => b - a)
