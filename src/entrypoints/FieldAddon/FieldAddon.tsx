@@ -77,10 +77,10 @@ export default function FieldAddon({ ctx }: Props) {
   const wordCounterField: any = useMemo(() => {
     if (hasExposedWordCounterField) {
       const fields: any[] = Object.entries(ctx.fields).map(
-        ([_, field]) => field
+        ([_, field]) => field,
       )
       const wordCounterField: any = fields.find(
-        (field) => field.attributes.api_key === exposedWordCounterFieldId
+        (field) => field.attributes.api_key === exposedWordCounterFieldId,
       )
       return wordCounterField
     }
@@ -108,7 +108,7 @@ export default function FieldAddon({ ctx }: Props) {
 
       const fullExposedWordCounter: any = get(
         ctx.formValues,
-        exposedWordCounterFieldId
+        exposedWordCounterFieldId,
       )
       const exposedWordCounter: SavingCountObject = wordCounterFieldIsLocalized
         ? JSON.parse(fullExposedWordCounter[locale])
@@ -137,13 +137,13 @@ export default function FieldAddon({ ctx }: Props) {
 
         const countsAreEqual = objectsAreEqual(
           exposedWordCounter,
-          newExposedWordCounter
+          newExposedWordCounter,
         )
 
         if (!countsAreEqual) {
           ctx.setFieldValue(
             wordCounterPath,
-            JSON.stringify(newExposedWordCounter)
+            JSON.stringify(newExposedWordCounter),
           )
         }
       }
@@ -155,7 +155,7 @@ export default function FieldAddon({ ctx }: Props) {
       wordCounterFieldIsJson,
       exposedWordCounter,
       wordCounterFieldIsLocalized,
-    ]
+    ],
   )
 
   const showSpacesSwitch: boolean = useMemo(() => {
@@ -165,7 +165,7 @@ export default function FieldAddon({ ctx }: Props) {
       calculationsSettings.some(
         (setting) =>
           setting.value === calculationsConstants.numberOfCharacters ||
-          setting.value === calculationsConstants.numberOfSpecialCharacters
+          setting.value === calculationsConstants.numberOfSpecialCharacters,
       )
     )
   }, [spaceSettings, calculationsSettings])
@@ -177,7 +177,7 @@ export default function FieldAddon({ ctx }: Props) {
       calculationsSettings.some(
         (setting) =>
           setting.value === calculationsConstants.numberOfCharacters ||
-          setting.value === calculationsConstants.numberOfSpecialCharacters
+          setting.value === calculationsConstants.numberOfSpecialCharacters,
       )
     )
   }, [htmlSettings, calculationsSettings])
@@ -186,13 +186,13 @@ export default function FieldAddon({ ctx }: Props) {
     showSpacesSwitch
       ? exposedWordCounter?.settings?.includeSpace || false
       : spaceSettings.value === spaceConstants.includeSpaces &&
-          spaceSettings.value !== spaceConstants.excludeSpaces
+          spaceSettings.value !== spaceConstants.excludeSpaces,
   )
   const [showHTML, setShowHTML] = useState<boolean>(
     showHTMLSwitch
       ? exposedWordCounter?.settings?.includeHTML || false
       : htmlSettings.value === htmlConstants.includeHTML &&
-          htmlSettings.value !== htmlConstants.excludeHTML
+          htmlSettings.value !== htmlConstants.excludeHTML,
   )
   const [showInfo, setShowInfo] = useState<boolean>(false)
   const [showCommonWords, setShowCommonWords] = useState<boolean>(false)
@@ -314,7 +314,7 @@ export default function FieldAddon({ ctx }: Props) {
 
             {calculationsSettings.some(
               (setting) =>
-                setting.value === calculationsConstants.numberOfCharacters
+                setting.value === calculationsConstants.numberOfCharacters,
             ) ? (
               <>
                 <dt>Characters</dt>
@@ -366,7 +366,7 @@ export default function FieldAddon({ ctx }: Props) {
             {calculationsSettings.some(
               (setting) =>
                 setting.value ===
-                calculationsConstants.numberOfSpecialCharacters
+                calculationsConstants.numberOfSpecialCharacters,
             ) ? (
               <>
                 <dt>Special characters</dt>
@@ -378,7 +378,7 @@ export default function FieldAddon({ ctx }: Props) {
 
             {calculationsSettings.some(
               (setting) =>
-                setting.value === calculationsConstants.numberOfSentences
+                setting.value === calculationsConstants.numberOfSentences,
             ) ? (
               <>
                 <dt>Sentences</dt>
@@ -390,7 +390,7 @@ export default function FieldAddon({ ctx }: Props) {
 
             {calculationsSettings.some(
               (setting) =>
-                setting.value === calculationsConstants.numberOfParagraphs
+                setting.value === calculationsConstants.numberOfParagraphs,
             ) ? (
               <>
                 <dt>Paragraphs</dt>
@@ -401,7 +401,7 @@ export default function FieldAddon({ ctx }: Props) {
             )}
 
             {calculationsSettings.some(
-              (setting) => setting.value === calculationsConstants.readingTime
+              (setting) => setting.value === calculationsConstants.readingTime,
             ) ? (
               <>
                 <dt>Reading time</dt>
@@ -446,7 +446,8 @@ export default function FieldAddon({ ctx }: Props) {
           )}
 
           {calculationsSettings.some(
-            (setting) => setting.value === calculationsConstants.showCommonWords
+            (setting) =>
+              setting.value === calculationsConstants.showCommonWords,
           ) && (
             <>
               <button

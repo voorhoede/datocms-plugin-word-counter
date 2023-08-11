@@ -40,7 +40,7 @@ connect({
   },
   renderManualFieldExtensionConfigScreen(
     _,
-    ctx: RenderManualFieldExtensionConfigScreenCtx
+    ctx: RenderManualFieldExtensionConfigScreenCtx,
   ) {
     return render(<FieldAddonConfigScreen ctx={ctx} />)
   },
@@ -52,10 +52,10 @@ connect({
       pluginGlobalParameters?.fieldsToEnable || fieldsOptions
 
     const hasPlugin: boolean = field.attributes.appearance.addons.some(
-      (addon) => addon.field_extension === extensionId
+      (addon) => addon.field_extension === extensionId,
     )
     const showOnThisFieldType: boolean = fieldsSettings.some(
-      (setting: SettingOption) => setting.value === field.attributes.field_type
+      (setting: SettingOption) => setting.value === field.attributes.field_type,
     )
 
     if (

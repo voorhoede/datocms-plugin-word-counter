@@ -57,5 +57,5 @@ export enum Fields {
   stringField = 'string',
   textField = 'text',
   structuredTextField = 'structured_text',
-  jsonField = 'json'
+  jsonField = 'json',
 }

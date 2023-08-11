@@ -38,7 +38,7 @@ export default function StatsList({ children, title, list }: Props) {
 
 function getDefinitions(
   acc: ReactElement[],
-  child: ReactElement
+  child: ReactElement,
 ): ReactElement[] {
   if (
     child.type !== 'dd' &&

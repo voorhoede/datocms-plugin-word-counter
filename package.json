@@ -4,29 +4,36 @@
   "version": "1.5.2",
   "description": "A plugin for DatoCMS that gives info for text and string fields about word count",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
     "build": "cross-env PUBLIC_URL='.' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "prettier": "prettier --write .",
+    "pre-commit": "npm run prettier",
     "prepack": "npm run build",
+    "prepare": "husky install",
     "postversion": "git push --follow-tags"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.192",
-    "@types/node": "^18.15.11",
-    "@types/react": "^18.0.33",
-    "@types/react-dom": "^18.0.11",
-    "datocms-plugin-sdk": "^0.7.4",
-    "datocms-react-ui": "^0.7.4",
+    "@types/lodash": "^4.14.197",
+    "@types/node": "^20.4.9",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "datocms-plugin-sdk": "^0.7.14",
+    "datocms-react-ui": "^0.7.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^4.9.5"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^8.0.3",
+    "prettier": "^3.0.1",
     "react-scripts": "^5.0.1"
   },
   "files": [
@@ -67,9 +74,25 @@
     "entryPoint": "build/index.html"
   },
   "eslintConfig": {
+    "plugins": [
+      "prettier"
+    ],
     "extends": [
-      "react-app"
-    ]
+      "react-app",
+      "prettier"
+    ],
+    "rules": {
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
+      ],
+      "prettier/prettier": 1
+    }
   },
   "browserslist": {
     "production": [
