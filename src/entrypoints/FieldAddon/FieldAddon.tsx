@@ -42,14 +42,31 @@ export default function FieldAddon({ ctx }: Props) {
   const pluginGlobalParameters: GlobalParameters =
     ctx.plugin.attributes.parameters
   const pluginParameters: Parameters = ctx.parameters
-  const fieldKey: string = ctx.field.attributes.api_key
+  const fieldPath: string = ctx.fieldPath
   const locale: string = ctx.locale
+  const isLocalized: boolean = ctx?.field.attributes.localized
 
+  function getExposedWordCounterFieldId() {
+    if (pluginParameters?.exposedWordCounterFieldId) {
+      return pluginParameters.exposedWordCounterFieldId
+    }
+
+    if (pluginGlobalParameters?.exposedWordCounterFieldId && isLocalized) {
+      return `${pluginGlobalParameters.exposedWordCounterFieldId}.${locale}`
+    }
+
+    if (isLocalized) {
+      const [fieldPathWithoutLocale]: string[] =
+        ctx.fieldPath.split(/\.(?=[^.]+$)/)
+      return `${fieldPathWithoutLocale}_${defaultExposedWordCounterFieldId}.${locale}`
+    }
+
+    return `${fieldPath}_${defaultExposedWordCounterFieldId}`
+  }
   const exposedWordCounterFieldId: Parameters['exposedWordCounterFieldId'] =
-    pluginParameters?.exposedWordCounterFieldId ||
-    `${fieldKey}_${defaultExposedWordCounterFieldId}`
+    getExposedWordCounterFieldId()
   const hasExposedWordCounterField: boolean =
-    ctx.formValues[exposedWordCounterFieldId] !== undefined
+    get(ctx.formValues, exposedWordCounterFieldId) !== undefined
 
   const validationLength: any = ctx.field.attributes.validators?.length
 
@@ -66,7 +83,7 @@ export default function FieldAddon({ ctx }: Props) {
     pluginGlobalParameters?.includeHTML ||
     htmlOptions[0]
 
-  const fieldValue: any = get(ctx.formValues, ctx.fieldPath)
+  const fieldValue: any = get(ctx.formValues, fieldPath)
   const fieldValueString: string =
     ctx.field.attributes.field_type === Fields.structuredTextField
       ? structuredTextToString(fieldValue)
@@ -74,64 +91,30 @@ export default function FieldAddon({ ctx }: Props) {
 
   const fieldStats: CountObject = counter(fieldValueString)
 
-  const wordCounterField: any = useMemo(() => {
-    if (hasExposedWordCounterField) {
-      const fields: any[] = Object.entries(ctx.fields).map(
-        ([_, field]) => field,
-      )
-      const wordCounterField: any = fields.find(
-        (field) => field.attributes.api_key === exposedWordCounterFieldId,
-      )
-      return wordCounterField
-    }
-    return
-  }, [ctx, exposedWordCounterFieldId, hasExposedWordCounterField])
-
-  const wordCounterFieldIsJson: boolean = useMemo(() => {
-    const isJsonField: boolean =
-      wordCounterField?.attributes.field_type === Fields.jsonField
-    return isJsonField
-  }, [wordCounterField])
-
-  const wordCounterFieldIsLocalized: boolean = useMemo(() => {
-    const isLocalized: boolean = wordCounterField?.attributes.localized
-    return isLocalized
-  }, [wordCounterField])
-
-  const exposedWordCounter: SavingCountObject | undefined = useMemo(() => {
-    if (wordCounterFieldIsJson) {
-      const wordCounterPath: string = wordCounterFieldIsLocalized
-        ? `${exposedWordCounterFieldId}.${locale}`
-        : exposedWordCounterFieldId
-
-      ctx.toggleField(wordCounterPath, false)
+  function getExposedWordCounter() {
+    if (hasExposedWordCounterField && exposedWordCounterFieldId) {
+      ctx.toggleField(exposedWordCounterFieldId, false)
 
       const fullExposedWordCounter: any = get(
         ctx.formValues,
         exposedWordCounterFieldId,
       )
-      const exposedWordCounter: SavingCountObject = wordCounterFieldIsLocalized
-        ? JSON.parse(fullExposedWordCounter[locale])
-        : JSON.parse(fullExposedWordCounter)
+      const exposedWordCounter: SavingCountObject = JSON.parse(
+        fullExposedWordCounter,
+      )
 
       return exposedWordCounter
     }
     return undefined
-  }, [
-    ctx,
-    locale,
-    exposedWordCounterFieldId,
-    wordCounterFieldIsJson,
-    wordCounterFieldIsLocalized,
-  ])
+  }
+  const exposedWordCounter: SavingCountObject | undefined =
+    getExposedWordCounter()
 
   const saveExposedWordCount = useCallback(
     (newExposedWordCounter: SavingCountObject) => {
       // If the exposed word counter field is present, we want to expose the newExposedWordCounter
-      if (wordCounterFieldIsJson) {
-        const wordCounterPath: string = wordCounterFieldIsLocalized
-          ? `${exposedWordCounterFieldId}.${locale}`
-          : exposedWordCounterFieldId
+      if (hasExposedWordCounterField) {
+        const wordCounterPath: string = exposedWordCounterFieldId
 
         ctx.toggleField(wordCounterPath, false)
 
@@ -150,37 +133,29 @@ export default function FieldAddon({ ctx }: Props) {
     },
     [
       ctx,
-      locale,
       exposedWordCounterFieldId,
-      wordCounterFieldIsJson,
+      hasExposedWordCounterField,
       exposedWordCounter,
-      wordCounterFieldIsLocalized,
     ],
   )
 
-  const showSpacesSwitch: boolean = useMemo(() => {
-    return (
-      spaceSettings.value !== spaceConstants.includeSpaces &&
-      spaceSettings.value !== spaceConstants.excludeSpaces &&
-      calculationsSettings.some(
-        (setting) =>
-          setting.value === calculationsConstants.numberOfCharacters ||
-          setting.value === calculationsConstants.numberOfSpecialCharacters,
-      )
+  const showSpacesSwitch: boolean =
+    spaceSettings.value !== spaceConstants.includeSpaces &&
+    spaceSettings.value !== spaceConstants.excludeSpaces &&
+    calculationsSettings.some(
+      (setting) =>
+        setting.value === calculationsConstants.numberOfCharacters ||
+        setting.value === calculationsConstants.numberOfSpecialCharacters,
     )
-  }, [spaceSettings, calculationsSettings])
 
-  const showHTMLSwitch: boolean = useMemo(() => {
-    return (
-      htmlSettings.value !== htmlConstants.includeHTML &&
-      htmlSettings.value !== htmlConstants.excludeHTML &&
-      calculationsSettings.some(
-        (setting) =>
-          setting.value === calculationsConstants.numberOfCharacters ||
-          setting.value === calculationsConstants.numberOfSpecialCharacters,
-      )
+  const showHTMLSwitch: boolean =
+    htmlSettings.value !== htmlConstants.includeHTML &&
+    htmlSettings.value !== htmlConstants.excludeHTML &&
+    calculationsSettings.some(
+      (setting) =>
+        setting.value === calculationsConstants.numberOfCharacters ||
+        setting.value === calculationsConstants.numberOfSpecialCharacters,
     )
-  }, [htmlSettings, calculationsSettings])
 
   const [showSpaces, setShowSpaces] = useState<boolean>(
     showSpacesSwitch
